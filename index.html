@@ -1,1 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUST - Spaced Repetition</title>
+    <style>
+        /* Main styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: white;
+            color: #d50000;
+            background-image: var(--bg-image, none);
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Header styles */
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #d50000;
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            color: #d50000;
+            margin-bottom: 5px;
+            font-size: 2.5em;
+        }
+
+        .slogan {
+            font-style: italic;
+            color: #d50000;
+            font-size: 1.2em;
+        }
+
+        /* Input section */
+        .input-section {
+            background-color: #ffebee;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .input-section h2 {
+            margin-top: 0;
+            color: #b71c1c;
+        }
+
+        /* Form elements */
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #d50000;
+            border-radius: 4px;
+            width: 200px;
+        }
+
+        input[type="date"] {
+            width: 180px;
+        }
+
+        input[type="url"] {
+            width: 300px;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            border: 1px solid #d50000;
+            border-radius: 4px;
+            background-color: #d50000;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #b71c1c;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #d50000;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #ffebee;
+            font-weight: bold;
+            color: #b71c1c;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fff5f5;
+        }
+
+        /* Checkbox styles */
+        .checkbox-container {
+            display: block;
+            position: relative;
+            padding-left: 25px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 18px;
+            width: 18px;
+            background-color: #fff;
+            border: 1px solid #d50000;
+            border-radius: 3px;
+        }
+
+        .checkbox-container:hover input ~ .checkmark {
+            background-color: #ffebee;
+        }
+
+        .checkbox-container input:checked ~ .checkmark {
+            background-color: #d50000;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .checkbox-container input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .checkbox-container .checkmark:after {
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* Progress bar styles */
+        .progress-container {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .progress-title {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ffebee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #d50000;
+            transition: width 0.5s ease;
+        }
+
+        /* Action buttons */
+        .actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .actions button {
+            margin-left: 10px;
+        }
+
+        /* Delete button in table */
+        .delete-btn {
+            background-color: #f44336;
+            border-color: #d32f2f;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* Progress charts section */
+        .progress-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #ffebee;
+            border-radius: 5px;
+        }
+
+        .progress-charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .progress-card {
+            flex: 1 1 300px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .progress-card h3 {
+            margin-top: 0;
+            color: #b71c1c;
+        }
+
+        /* Background settings */
+        .background-settings {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #ffebee;
+            border-radius: 5px;
+        }
+
+        .background-settings h2 {
+            margin-top: 0;
+            color: #b71c1c;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .input-section {
+                padding: 15px;
+            }
+            
+            input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+
+            .progress-charts {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>HUST</h1>
+            <p class="slogan">One Love One Future</p>
+        </header>
+
+        <!-- Thêm phần cài đặt background -->
+        <div class="background-settings">
+            <h2>Background Settings</h2>
+            <input type="url" id="bgImageUrl" placeholder="Paste image URL here">
+            <button onclick="setBackground()">Set Background</button>
+            <button onclick="clearBackground()">Clear Background</button>
+        </div>
+
+        <div class="input-section">
+            <h2>Add New Subject</h2>
+            <input type="text" id="subjectName" placeholder="Subject name">
+            <input type="date" id="startDate">
+            <button onclick="addSubject()">Add Subject</button>
+        </div>
+
+        <div class="actions">
+            <button onclick="exportToExcel()">Export to Excel</button>
+            <button onclick="saveToGitHub()">Save to GitHub</button>
+        </div>
+
+        <table id="scheduleTable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Session 1</th>
+                    <th>Session 2 (+3d)</th>
+                    <th>Session 3 (+7d)</th>
+                    <th>Session 4 (+14d)</th>
+                    <th>Session 5 (+21d)</th>
+                    <th>Session 6 (+30d)</th>
+                    <th>Session 7 (+20d)</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="scheduleBody">
+                <!-- Subjects will be added here -->
+            </tbody>
+        </table>
+
+        <div class="progress-section">
+            <h2>Progress Overview</h2>
+            <div class="progress-charts" id="progressCharts">
+                <!-- Progress charts will be added here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Spaced repetition intervals (in days)
+        const intervals = [3, 7, 14, 21, 30, 20];
+
+        // Load subjects from localStorage
+        let subjects = JSON.parse(localStorage.getItem('subjects')) || [];
+
+        // Load background from localStorage
+        const savedBg = localStorage.getItem('backgroundImage');
+        if (savedBg) {
+            document.body.style.setProperty('--bg-image', `url('${savedBg}')`);
+        }
+
+        // Initialize the schedule table
+        function initSchedule() {
+            const scheduleBody = document.getElementById('scheduleBody');
+            scheduleBody.innerHTML = '';
+
+            subjects.forEach((subject, index) => {
+                const row = document.createElement('tr');
+                
+                // Subject name cell
+                const nameCell = document.createElement('td');
+                nameCell.textContent = subject.name;
+                row.appendChild(nameCell);
+
+                // Calculate and add session dates
+                let currentDate = new Date(subject.startDate);
+                for (let i = 0; i <= intervals.length; i++) {
+                    const dateCell = document.createElement('td');
+                    
+                    // Format date
+                    const dateStr = currentDate.toISOString().split('T')[0];
+                    
+                    // Create checkbox
+                    const checkboxId = `subject-${index}-session-${i}`;
+                    const isChecked = subject.completed && subject.completed[i] ? 'checked' : '';
+                    
+                    dateCell.innerHTML = `
+                        ${dateStr}
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="${checkboxId}" ${isChecked} 
+                                   onchange="toggleCompletion(${index}, ${i}, this.checked)">
+                            <span class="checkmark"></span>
+                        </label>
+                    `;
+                    
+                    row.appendChild(dateCell);
+
+                    // Calculate next date if not the last session
+                    if (i < intervals.length) {
+                        currentDate = new Date(currentDate);
+                        currentDate.setDate(currentDate.getDate() + intervals[i]);
+                    }
+                }
+
+                // Add delete button
+                const deleteCell = document.createElement('td');
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.onclick = () => deleteSubject(index);
+                deleteCell.appendChild(deleteBtn);
+                row.appendChild(deleteCell);
+
+                scheduleBody.appendChild(row);
+            });
+
+            // Update progress charts
+            updateProgressCharts();
+        }
+
+        // Set background image
+        function setBackground() {
+            const bgUrl = document.getElementById('bgImageUrl').value;
+            if (bgUrl) {
+                document.body.style.setProperty('--bg-image', `url('${bgUrl}')`);
+                localStorage.setItem('backgroundImage', bgUrl);
+            }
+        }
+
+        // Clear background image
+        function clearBackground() {
+            document.body.style.setProperty('--bg-image', 'none');
+            localStorage.removeItem('backgroundImage');
+            document.getElementById('bgImageUrl').value = '';
+        }
+
+        // Add a new subject
+        function addSubject() {
+            const subjectName = document.getElementById('subjectName').value;
+            const startDate = document.getElementById('startDate').value;
+
+            if (!subjectName || !startDate) {
+                alert('Please enter both subject name and start date');
+                return;
+            }
+
+            subjects.push({
+                name: subjectName,
+                startDate: startDate,
+                completed: []
+            });
+
+            saveSubjects();
+            initSchedule();
+
+            // Clear input fields
+            document.getElementById('subjectName').value = '';
+            document.getElementById('startDate').value = '';
+        }
+
+        // Delete a subject
+        function deleteSubject(index) {
+            if (confirm('Are you sure you want to delete this subject?')) {
+                subjects.splice(index, 1);
+                saveSubjects();
+                initSchedule();
+            }
+        }
+
+        // Toggle completion status
+        function toggleCompletion(subjectIndex, sessionIndex, isCompleted) {
+            if (!subjects[subjectIndex].completed) {
+                subjects[subjectIndex].completed = [];
+            }
+            subjects[subjectIndex].completed[sessionIndex] = isCompleted;
+            saveSubjects();
+            updateProgressCharts();
+        }
+
+        // Update progress charts
+        function updateProgressCharts() {
+            const progressCharts = document.getElementById('progressCharts');
+            progressCharts.innerHTML = '';
+
+            subjects.forEach((subject, index) => {
+                const totalSessions = intervals.length + 1;
+                const completedSessions = subject.completed ? subject.completed.filter(Boolean).length : 0;
+                const progressPercent = Math.round((completedSessions / totalSessions) * 100);
+
+                const progressCard = document.createElement('div');
+                progressCard.className = 'progress-card';
+                progressCard.innerHTML = `
+                    <h3>${subject.name}</h3>
+                    <div class="progress-container">
+                        <div class="progress-title">${completedSessions}/${totalSessions} sessions completed</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                progressCharts.appendChild(progressCard);
+            });
+        }
+
+        // Save subjects to localStorage
+        function saveSubjects() {
+            localStorage.setItem('subjects', JSON.stringify(subjects));
+        }
+
+        // Export to Excel
+        function exportToExcel() {
+            let csv = 'Subject,Session 1,Session 2 (+3d),Session 3 (+7d),Session 4 (+14d),Session 5 (+21d),Session 6 (+30d),Session 7 (+20d),Completed\n';
+
+            subjects.forEach(subject => {
+                let currentDate = new Date(subject.startDate);
+                let row = `"${subject.name}","${currentDate.toISOString().split('T')[0]}"`;
+                let completed = [];
+
+                for (let i = 0; i <= intervals.length; i++) {
+                    if (i > 0) {
+                        currentDate = new Date(currentDate);
+                        currentDate.setDate(currentDate.getDate() + intervals[i-1]);
+                    }
+                    
+                    if (i < intervals.length) {
+                        completed.push(subject.completed && subject.completed[i] ? 'Yes' : 'No');
+                    }
+                }
+
+                csv += row + `,"${completed.join(',')}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'hust_repetition_schedule.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Save to GitHub (simplified)
+        function saveToGitHub() {
+            alert('GitHub integration would be implemented here.\nFor now, data is saved in your browser\'s localStorage.');
+        }
+
+        // Initialize the schedule when page loads
+        document.addEventListener('DOMContentLoaded', initSchedule);
+    </script>
+</body>
+</html>
